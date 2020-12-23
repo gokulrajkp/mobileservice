@@ -3,10 +3,7 @@ package almadina;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import java.awt.Color;
 import java.awt.EventQueue;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
 import javax.swing.UIManager;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
@@ -18,8 +15,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import javax.swing.JButton;
-import java.awt.Rectangle;
 
 public class Receiptp extends JPanel {
 	JTextArea receipt;
@@ -46,7 +41,7 @@ public class Receiptp extends JPanel {
 	public Receiptp() {
 		setBackground(UIManager.getColor("DesktopIcon.background"));
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 349, 0, 0};
+		gridBagLayout.columnWidths = new int[]{0, 315, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
@@ -74,10 +69,11 @@ public class Receiptp extends JPanel {
 				
 			}
 			JScrollPane scrollpane =new JScrollPane(receipt,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			scrollpane.setAutoscrolls(true);
 			receipt.setWrapStyleWord(true);
-			receipt.setText(" ******************************************************* \n");
-			receipt.setText(receipt.getText()+"                     AL MADINA MOBILES                  \n ");
-			receipt.setText(receipt.getText()+"******************************************************* \n");
+			receipt.setText(" ********************************************************* \n");
+			receipt.setText(receipt.getText()+"                     AL MADINA MOBILES                   \n ");
+			receipt.setText(receipt.getText()+"********************************************************* \n");
 			
 			
 			receipt.setText(receipt.getText()+"Date & Time :"+"           "+s2+"\n");
@@ -86,14 +82,14 @@ public class Receiptp extends JPanel {
 			receipt.setText(receipt.getText()+"Customer Name :"+"    "+s4+"\n");
 			receipt.setText(receipt.getText()+"Mobile Number :"+"       "+s5+"\n");
 			receipt.setText(receipt.getText()+"Model Number :"+"         "+s6+"\n");
-			receipt.setText(receipt.getText()+"iemi :"+"                         "+s7+"\n");
+			receipt.setText(receipt.getText()+"imei :"+"                         "+s7+"\n");
 			receipt.setText(receipt.getText()+"complaints :"+"              "+s8+"\n");
 			
-			receipt.setText(receipt.getText()+" ----------------------------------------------------------------------------------- \n");
-			receipt.setText(receipt.getText()+"                              THANK YOU ....                     \n");
-			receipt.setText(receipt.getText()+" ----------------------------------------------------------------------------------- \n");
+			receipt.setText(receipt.getText()+" ------------------------------------------------------------------- \n");
+			receipt.setText(receipt.getText()+"                              THANK YOU ....                         \n");
+			receipt.setText(receipt.getText()+" ------------------------------------------------------------------- \n");
 			receipt.setText(receipt.getText()+"\n");
-			receipt.setText(receipt.getText()+"Contact :\n");
+			receipt.setText(receipt.getText()+"Contact : +971527245544 \n");
 			
 			receipt.setLineWrap(true);
 			receipt.setFont(new Font("Dialog", Font.PLAIN, 12));

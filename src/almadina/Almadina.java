@@ -38,19 +38,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import net.miginfocom.swing.MigLayout;
 import javax.swing.JButton;
-import java.awt.FlowLayout;
-import javax.swing.BoxLayout;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
 
 
 
-import javax.swing.SwingConstants;
-import java.awt.BorderLayout;
 import javax.swing.ImageIcon;
-import java.awt.Dimension;
 import java.awt.Cursor;
+import java.awt.Toolkit;
 
 
 public class Almadina {
@@ -115,16 +109,20 @@ public class Almadina {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(80, 80, 1118, 660);
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(Almadina.class.getResource("/almadina/img/images.jpeg")));
+		frame.setBounds(80, 60, 1118, 660);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		bg.setBackground(UIManager.getColor("Desktop.background"));
 		bg.setBounds(0, 0, 1120, 670);
 		frame.getContentPane().add(bg);
 		bg.setLayout(null);
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd hh:mm");
+		frame.setResizable(false);
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd hh:mm:ss");
 		LocalDateTime now = LocalDateTime.now();
 		pdate = dtf.format(now);
+		
+		frame.setTitle("NOOR ALWADI MOBILES");
 		
 		headingpanel = new JPanel();
 		headingpanel.setBackground(new Color(153, 0, 255));
@@ -132,10 +130,10 @@ public class Almadina {
 		bg.add(headingpanel);
 		headingpanel.setLayout(null);
 		
-		JLabel lblAlMadinaMobiles = new JLabel("AL MADINA MOBILES");
+		JLabel lblAlMadinaMobiles = new JLabel("NOOR ALWADI MOBILES");
 		lblAlMadinaMobiles.setForeground(new Color(255, 255, 255));
 		lblAlMadinaMobiles.setFont(new Font("Caladea", Font.BOLD | Font.ITALIC, 24));
-		lblAlMadinaMobiles.setBounds(269, 33, 272, 42);
+		lblAlMadinaMobiles.setBounds(269, 33, 302, 42);
 		headingpanel.add(lblAlMadinaMobiles);
 		
 		JLabel lblQaulityBrilliance = new JLabel("qaulity brilliance...");
@@ -147,7 +145,7 @@ public class Almadina {
 		
 		working_p = new JPanel();
 		working_p.setBackground(UIManager.getColor("ComboBox.disabledForeground"));
-		working_p.setBounds(204, 162, 904, 468);
+		working_p.setBounds(204, 162, 904, 466);
 		bg.add(working_p);
 		GridBagLayout gbl_working_p = new GridBagLayout();
 		gbl_working_p.columnWidths = new int[]{215, 170, 78, 150, 147, 0};
@@ -166,7 +164,7 @@ public class Almadina {
 			working_p.add(lblDatetime, gbc_lblDatetime);
 			
 			date_time = new JTextField();
-			date_time.setText("2020/12/22 05:33");
+			date_time.setText(pdate);
 			date_time.setFont(new Font("Dialog", Font.PLAIN, 18));
 			date_time.setEditable(false);
 			date_time.setColumns(10);
@@ -194,6 +192,12 @@ public class Almadina {
 			gbc_sales_man.fill = GridBagConstraints.HORIZONTAL;
 			gbc_sales_man.gridx = 4;
 			gbc_sales_man.gridy = 1;
+			sales_man.addKeyListener(new KeyAdapter() {
+				public void keyTyped(KeyEvent e) {
+					if(sales_man.getText().length() >=20)
+						e.consume();
+				}
+			});
 			working_p.add(sales_man, gbc_sales_man);
 			JSeparator separator = new JSeparator();
 			GridBagConstraints gbc_separator = new GridBagConstraints();
@@ -341,6 +345,12 @@ public class Almadina {
 			gbc_complaints.insets = new Insets(0, 0, 5, 0);
 			gbc_complaints.gridx = 0;
 			gbc_complaints.gridy = 8;
+			complaints.addKeyListener(new KeyAdapter() {
+				public void keyTyped(KeyEvent e) {
+					if(complaints.getText().length() >=500)
+						e.consume();
+				}
+			});
 			complaints.setWrapStyleWord(true);
 			complaints.setLineWrap(true);
 			JScrollPane sc =new JScrollPane(complaints,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -359,6 +369,10 @@ public class Almadina {
 		home_p.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				setColor(home_p);
+				resetColor(search_p);
+				resetColor(print_p);
+				
 				working_p.setVisible(true);
 				search.setVisible(false);
 				scrollPane.setVisible(false);
@@ -383,63 +397,6 @@ public class Almadina {
 		home_p.add(lblHome);
 		
 		
-		JButton btnSearch = new JButton("SEARCH");
-		btnSearch.setBorder(UIManager.getBorder("DesktopIcon.border"));
-		btnSearch.setOpaque(false);
-		btnSearch.setFont(new Font("Roboto Slab", Font.BOLD, 14));
-		btnSearch.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				if(imei_s.getText().equals("")) {
-					JOptionPane.showMessageDialog(null, "Enter valid imei"); 
-					
-					
-				}else {
-					
-				
-				try {
-					String str = imei_s.getText();
-					
-					Class.forName("org.sqlite.JDBC");				
-					Connection con= DriverManager.getConnection("jdbc:sqlite:memory.db");
-					PreparedStatement st = con.prepareStatement("SELECT * FROM almadina WHERE imei = ? ");
-					st.setString(1, str);
-		
-					ResultSet rs = st.executeQuery();
-					if(rs.next()) {
-						String s= rs.getString(1);
-						String s1= rs.getString(2);
-						String s2= rs.getString(3);
-						String s3= rs.getString(4);
-						String s4= rs.getString(5);
-						String s5= rs.getString(6);
-						String s6= rs.getString(7);
-						String s7= rs.getString(8);
-						String s8= rs.getString(9);
-						
-						
-						
-						datetime_s.setText(s2);
-						refno_s.setText(s1);
-						salesman_s.setText(s3);
-						custname_s.setText(s4);
-						mobno_s.setText(s5);
-						model_s.setText(s6);
-						complaints_s.setText(s8);
-					
-					} else {  
-		                JOptionPane.showMessageDialog(null, "Data not Found");  
-		            }  
-					con.close();
-				} catch (Exception e) {
-					// TODO: handle exception
-					System.out.println(e);
-				}
-				}
-			}	
-		
-		});
-		
-		
 		
 		
 		
@@ -461,6 +418,10 @@ public class Almadina {
 		print_p.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				setColor(print_p);
+				resetColor(home_p);
+				resetColor(search_p);
+				
 				if(date_time.getText().equals("")||sales_man.getText().equals("")||cust_name.getText().equals("")||mob_no.getText().equals("")||
 						model_no.getText().equals("")||imei.getText().equals("")||complaints.getText().equals("")) {
 					JOptionPane.showMessageDialog(null, "Enter the details!!!!");
@@ -488,7 +449,6 @@ public class Almadina {
 						ps.executeUpdate();
 					
 						conn.close();
-						System.out.println("saved");
 						
 						working_p.setVisible(false);
 						search.setVisible(false);
@@ -521,6 +481,7 @@ public class Almadina {
 						
 					} catch (Exception e2) {
 						// TODO: handle exception
+						JOptionPane.showMessageDialog(null, "current imei exist");
 					}
 				}
 				
@@ -549,6 +510,10 @@ public class Almadina {
 		search_p.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				setColor(search_p);
+				resetColor(home_p);
+				resetColor(print_p);
+				
 				working_p.setVisible(false);
 				search.setVisible(true);
 				scrollPane.setVisible(false);
@@ -570,218 +535,284 @@ public class Almadina {
 		search_p.add(lblSearch);
 		sidepanel.add(print_p);
 		
-		search = new JPanel();
-		search.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		search.setBackground(UIManager.getColor("DesktopIcon.background"));
-		search.setBounds(204, 162, 904, 466);
-		bg.add(search);
-		search.setLayout(null);
+		JLabel lblgokulraj = new JLabel("_goku_l_raj");
+		lblgokulraj.setBounds(55, 603, 89, 15);
+		sidepanel.add(lblgokulraj);
 		
-		JPanel panel = new JPanel();
-		panel.setBackground(UIManager.getColor("ComboBox.disabledForeground"));
-		panel.setBounds(171, 0, 590, 496);
-		search.add(panel);
-		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[]{161, 0, 90, 0};
-		gbl_panel.rowHeights = new int[]{25, 0, 25, 25, 25, 25, 25, 0, 100, 0, 0};
-		gbl_panel.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
-		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
-		panel.setLayout(gbl_panel);
+			
+			JButton btnSearch = new JButton("SEARCH");
+			btnSearch.setBorder(UIManager.getBorder("DesktopIcon.border"));
+			btnSearch.setOpaque(false);
+			btnSearch.setFont(new Font("Roboto Slab", Font.BOLD, 14));
+			btnSearch.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					if(imei_s.getText().equals("")) {
+						JOptionPane.showMessageDialog(null, "Enter valid imei"); 
+						
+						
+					}else {
+						
+					
+					try {
+						String str = imei_s.getText();
+						
+						Class.forName("org.sqlite.JDBC");				
+						Connection con= DriverManager.getConnection("jdbc:sqlite:memory.db");
+						PreparedStatement st = con.prepareStatement("SELECT * FROM almadina WHERE imei = ? ");
+						st.setString(1, str);
+			
+						ResultSet rs = st.executeQuery();
+						if(rs.next()) {
+							//String s= rs.getString(1);
+							String s1= rs.getString(2);
+							String s2= rs.getString(3);
+							String s3= rs.getString(4);
+							String s4= rs.getString(5);
+							String s5= rs.getString(6);
+							String s6= rs.getString(7);
+							//String s7= rs.getString(8);
+							String s8= rs.getString(9);
+							
+							
+							
+							datetime_s.setText(s2);
+							refno_s.setText(s1);
+							salesman_s.setText(s3);
+							custname_s.setText(s4);
+							mobno_s.setText(s5);
+							model_s.setText(s6);
+							complaints_s.setText(s8);
+						
+						} else {  
+			                JOptionPane.showMessageDialog(null, "Data not Found");  
+			            }  
+						con.close();
+					} catch (Exception e) {
+						// TODO: handle exception
+						System.out.println(e);
+					}
+					}
+				}	
+			
+			});
+			
+			search = new JPanel();
+			search.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+			search.setBackground(UIManager.getColor("DesktopIcon.background"));
+			search.setBounds(204, 162, 904, 466);
+			bg.add(search);
+			search.setLayout(null);
+			
+			JPanel panel = new JPanel();
+			panel.setBackground(UIManager.getColor("ComboBox.disabledForeground"));
+			panel.setBounds(171, 0, 590, 466);
+			search.add(panel);
+			GridBagLayout gbl_panel = new GridBagLayout();
+			gbl_panel.columnWidths = new int[]{161, 0, 90, 0};
+			gbl_panel.rowHeights = new int[]{25, 0, 25, 25, 25, 25, 25, 0, 226, 0};
+			gbl_panel.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
+			gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE};
+			panel.setLayout(gbl_panel);
+			
+			JLabel lblIemi = new JLabel("imei :");
+			lblIemi.setFont(new Font("Roboto Slab", Font.BOLD, 18));
+			GridBagConstraints gbc_lblIemi = new GridBagConstraints();
+			gbc_lblIemi.fill = GridBagConstraints.VERTICAL;
+			gbc_lblIemi.insets = new Insets(0, 0, 5, 5);
+			gbc_lblIemi.anchor = GridBagConstraints.EAST;
+			gbc_lblIemi.gridx = 0;
+			gbc_lblIemi.gridy = 0;
+			panel.add(lblIemi, gbc_lblIemi);
+			
+			imei_s = new JTextField();
+			imei_s.setFont(new Font("Dialog", Font.PLAIN, 18));
+			imei_s.setColumns(10);
+			imei_s.addKeyListener(new KeyAdapter() {
+				public void keyTyped(KeyEvent e) {
+					if(imei_s.getText().length() >=15)
+						e.consume();
+				}
+			});
+			GridBagConstraints gbc_imei_s = new GridBagConstraints();
+			gbc_imei_s.insets = new Insets(0, 0, 5, 5);
+			gbc_imei_s.fill = GridBagConstraints.BOTH;
+			gbc_imei_s.gridx = 1;
+			gbc_imei_s.gridy = 0;
+			panel.add(imei_s, gbc_imei_s);
+			GridBagConstraints gbc_btnSearch = new GridBagConstraints();
+			gbc_btnSearch.anchor = GridBagConstraints.WEST;
+			gbc_btnSearch.insets = new Insets(0, 0, 5, 0);
+			gbc_btnSearch.gridx = 2;
+			gbc_btnSearch.gridy = 0;
+			panel.add(btnSearch, gbc_btnSearch);
+			
+			JSeparator separator_2 = new JSeparator();
+			separator_2.setBackground(Color.BLACK);
+			GridBagConstraints gbc_separator_2 = new GridBagConstraints();
+			gbc_separator_2.gridwidth = 3;
+			gbc_separator_2.fill = GridBagConstraints.BOTH;
+			gbc_separator_2.insets = new Insets(0, 0, 5, 0);
+			gbc_separator_2.gridx = 0;
+			gbc_separator_2.gridy = 1;
+			panel.add(separator_2, gbc_separator_2);
+			
+			JLabel lblDatetime_1 = new JLabel("Date&Time :");
+			lblDatetime_1.setFont(new Font("Roboto Slab", Font.BOLD, 18));
+			GridBagConstraints gbc_lblDatetime_1 = new GridBagConstraints();
+			gbc_lblDatetime_1.fill = GridBagConstraints.VERTICAL;
+			gbc_lblDatetime_1.anchor = GridBagConstraints.EAST;
+			gbc_lblDatetime_1.insets = new Insets(0, 0, 5, 5);
+			gbc_lblDatetime_1.gridx = 0;
+			gbc_lblDatetime_1.gridy = 2;
+			panel.add(lblDatetime_1, gbc_lblDatetime_1);
+			
+			datetime_s = new JTextField();
+			datetime_s.setFont(new Font("Dialog", Font.PLAIN, 18));
+			datetime_s.setEditable(false);
+			datetime_s.setColumns(10);
+			GridBagConstraints gbc_datetime_s = new GridBagConstraints();
+			gbc_datetime_s.insets = new Insets(0, 0, 5, 5);
+			gbc_datetime_s.fill = GridBagConstraints.BOTH;
+			gbc_datetime_s.gridx = 1;
+			gbc_datetime_s.gridy = 2;
+			panel.add(datetime_s, gbc_datetime_s);
+			
+			JLabel lblRefno = new JLabel("Ref.No :");
+			lblRefno.setFont(new Font("Roboto Slab", Font.BOLD, 18));
+			GridBagConstraints gbc_lblRefno = new GridBagConstraints();
+			gbc_lblRefno.fill = GridBagConstraints.VERTICAL;
+			gbc_lblRefno.anchor = GridBagConstraints.EAST;
+			gbc_lblRefno.insets = new Insets(0, 0, 5, 5);
+			gbc_lblRefno.gridx = 0;
+			gbc_lblRefno.gridy = 3;
+			panel.add(lblRefno, gbc_lblRefno);
+			
+			refno_s = new JTextField();
+			refno_s.setFont(new Font("Dialog", Font.PLAIN, 18));
+			refno_s.setEditable(false);
+			refno_s.setColumns(10);
+			GridBagConstraints gbc_refno_s = new GridBagConstraints();
+			gbc_refno_s.insets = new Insets(0, 0, 5, 5);
+			gbc_refno_s.fill = GridBagConstraints.BOTH;
+			gbc_refno_s.gridx = 1;
+			gbc_refno_s.gridy = 3;
+			panel.add(refno_s, gbc_refno_s);
+			
+			JLabel lblSalesman = new JLabel(" SalesMan :");
+			lblSalesman.setFont(new Font("Roboto Slab", Font.BOLD, 18));
+			GridBagConstraints gbc_lblSalesman = new GridBagConstraints();
+			gbc_lblSalesman.fill = GridBagConstraints.VERTICAL;
+			gbc_lblSalesman.anchor = GridBagConstraints.EAST;
+			gbc_lblSalesman.insets = new Insets(0, 0, 5, 5);
+			gbc_lblSalesman.gridx = 0;
+			gbc_lblSalesman.gridy = 4;
+			panel.add(lblSalesman, gbc_lblSalesman);
+			
+			salesman_s = new JTextField();
+			salesman_s.setFont(new Font("Dialog", Font.PLAIN, 18));
+			salesman_s.setEditable(false);
+			salesman_s.setColumns(10);
+			GridBagConstraints gbc_salesman_s = new GridBagConstraints();
+			gbc_salesman_s.insets = new Insets(0, 0, 5, 5);
+			gbc_salesman_s.fill = GridBagConstraints.BOTH;
+			gbc_salesman_s.gridx = 1;
+			gbc_salesman_s.gridy = 4;
+			panel.add(salesman_s, gbc_salesman_s);
+			
+			JLabel lblCustomername = new JLabel("CustomerName :");
+			lblCustomername.setFont(new Font("Roboto Slab", Font.BOLD, 18));
+			GridBagConstraints gbc_lblCustomername = new GridBagConstraints();
+			gbc_lblCustomername.fill = GridBagConstraints.VERTICAL;
+			gbc_lblCustomername.anchor = GridBagConstraints.EAST;
+			gbc_lblCustomername.insets = new Insets(0, 0, 5, 5);
+			gbc_lblCustomername.gridx = 0;
+			gbc_lblCustomername.gridy = 5;
+			panel.add(lblCustomername, gbc_lblCustomername);
+			
+			custname_s = new JTextField();
+			custname_s.setFont(new Font("Dialog", Font.PLAIN, 18));
+			custname_s.setEditable(false);
+			custname_s.setColumns(10);
+			GridBagConstraints gbc_custname_s = new GridBagConstraints();
+			gbc_custname_s.insets = new Insets(0, 0, 5, 5);
+			gbc_custname_s.fill = GridBagConstraints.BOTH;
+			gbc_custname_s.gridx = 1;
+			gbc_custname_s.gridy = 5;
+			panel.add(custname_s, gbc_custname_s);
+			
+			JLabel lblMobilenumber = new JLabel("MobileNumber :");
+			lblMobilenumber.setFont(new Font("Roboto Slab", Font.BOLD, 18));
+			GridBagConstraints gbc_lblMobilenumber = new GridBagConstraints();
+			gbc_lblMobilenumber.fill = GridBagConstraints.VERTICAL;
+			gbc_lblMobilenumber.anchor = GridBagConstraints.EAST;
+			gbc_lblMobilenumber.insets = new Insets(0, 0, 5, 5);
+			gbc_lblMobilenumber.gridx = 0;
+			gbc_lblMobilenumber.gridy = 6;
+			panel.add(lblMobilenumber, gbc_lblMobilenumber);
+			
+			mobno_s = new JTextField();
+			mobno_s.setFont(new Font("Dialog", Font.PLAIN, 18));
+			mobno_s.setEditable(false);
+			mobno_s.setColumns(10);
+			GridBagConstraints gbc_mobno_s = new GridBagConstraints();
+			gbc_mobno_s.insets = new Insets(0, 0, 5, 5);
+			gbc_mobno_s.fill = GridBagConstraints.BOTH;
+			gbc_mobno_s.gridx = 1;
+			gbc_mobno_s.gridy = 6;
+			panel.add(mobno_s, gbc_mobno_s);
+			
+			JLabel lblModel = new JLabel("Model :");
+			lblModel.setFont(new Font("Roboto Slab", Font.BOLD, 18));
+			GridBagConstraints gbc_lblModel = new GridBagConstraints();
+			gbc_lblModel.fill = GridBagConstraints.VERTICAL;
+			gbc_lblModel.anchor = GridBagConstraints.EAST;
+			gbc_lblModel.insets = new Insets(0, 0, 5, 5);
+			gbc_lblModel.gridx = 0;
+			gbc_lblModel.gridy = 7;
+			panel.add(lblModel, gbc_lblModel);
+			
+			model_s = new JTextField();
+			model_s.setFont(new Font("Dialog", Font.PLAIN, 18));
+			model_s.setEditable(false);
+			model_s.setColumns(10);
+			GridBagConstraints gbc_model_s = new GridBagConstraints();
+			gbc_model_s.insets = new Insets(0, 0, 5, 5);
+			gbc_model_s.fill = GridBagConstraints.BOTH;
+			gbc_model_s.gridx = 1;
+			gbc_model_s.gridy = 7;
+			panel.add(model_s, gbc_model_s);
+			
+			JLabel lblComplaints_1 = new JLabel("Complaints :");
+			lblComplaints_1.setFont(new Font("Roboto Slab", Font.BOLD, 18));
+			GridBagConstraints gbc_lblComplaints_1 = new GridBagConstraints();
+			gbc_lblComplaints_1.anchor = GridBagConstraints.NORTHEAST;
+			gbc_lblComplaints_1.insets = new Insets(0, 0, 0, 5);
+			gbc_lblComplaints_1.gridx = 0;
+			gbc_lblComplaints_1.gridy = 8;
+			panel.add(lblComplaints_1, gbc_lblComplaints_1);
+			
+			complaints_s = new JTextArea();
+			complaints_s.setFont(new Font("Dialog", Font.PLAIN, 18));
+			complaints_s.setWrapStyleWord(true);
+			complaints_s.setLineWrap(true);
+			complaints_s.setEditable(false);
+			complaints_s.setWrapStyleWord(true);
+			complaints_s.setLineWrap(true);
+			JScrollPane sccomp =new JScrollPane(complaints_s,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+			GridBagConstraints gbc_complaints_s = new GridBagConstraints();
+			gbc_complaints_s.gridwidth = 2;
+			gbc_complaints_s.fill = GridBagConstraints.BOTH;
+			gbc_complaints_s.gridx = 1;
+			gbc_complaints_s.gridy = 8;
+			panel.add(sccomp, gbc_complaints_s);
 		
-		JLabel lblIemi = new JLabel("iemi :");
-		lblIemi.setFont(new Font("Roboto Slab", Font.BOLD, 18));
-		GridBagConstraints gbc_lblIemi = new GridBagConstraints();
-		gbc_lblIemi.fill = GridBagConstraints.VERTICAL;
-		gbc_lblIemi.insets = new Insets(0, 0, 5, 5);
-		gbc_lblIemi.anchor = GridBagConstraints.EAST;
-		gbc_lblIemi.gridx = 0;
-		gbc_lblIemi.gridy = 0;
-		panel.add(lblIemi, gbc_lblIemi);
-		
-		imei_s = new JTextField();
-		imei_s.setFont(new Font("Dialog", Font.PLAIN, 18));
-		imei_s.setColumns(10);
-		imei_s.addKeyListener(new KeyAdapter() {
-			public void keyTyped(KeyEvent e) {
-				if(imei_s.getText().length() >=15)
-					e.consume();
-			}
-		});
-		GridBagConstraints gbc_imei_s = new GridBagConstraints();
-		gbc_imei_s.insets = new Insets(0, 0, 5, 5);
-		gbc_imei_s.fill = GridBagConstraints.BOTH;
-		gbc_imei_s.gridx = 1;
-		gbc_imei_s.gridy = 0;
-		panel.add(imei_s, gbc_imei_s);
-		GridBagConstraints gbc_btnSearch = new GridBagConstraints();
-		gbc_btnSearch.anchor = GridBagConstraints.WEST;
-		gbc_btnSearch.insets = new Insets(0, 0, 5, 0);
-		gbc_btnSearch.gridx = 2;
-		gbc_btnSearch.gridy = 0;
-		panel.add(btnSearch, gbc_btnSearch);
-		
-		JSeparator separator_2 = new JSeparator();
-		separator_2.setBackground(Color.BLACK);
-		GridBagConstraints gbc_separator_2 = new GridBagConstraints();
-		gbc_separator_2.gridwidth = 3;
-		gbc_separator_2.fill = GridBagConstraints.BOTH;
-		gbc_separator_2.insets = new Insets(0, 0, 5, 5);
-		gbc_separator_2.gridx = 0;
-		gbc_separator_2.gridy = 1;
-		panel.add(separator_2, gbc_separator_2);
-		
-		JLabel lblDatetime_1 = new JLabel("Date&Time :");
-		lblDatetime_1.setFont(new Font("Roboto Slab", Font.BOLD, 18));
-		GridBagConstraints gbc_lblDatetime_1 = new GridBagConstraints();
-		gbc_lblDatetime_1.fill = GridBagConstraints.VERTICAL;
-		gbc_lblDatetime_1.anchor = GridBagConstraints.EAST;
-		gbc_lblDatetime_1.insets = new Insets(0, 0, 5, 5);
-		gbc_lblDatetime_1.gridx = 0;
-		gbc_lblDatetime_1.gridy = 2;
-		panel.add(lblDatetime_1, gbc_lblDatetime_1);
-		
-		datetime_s = new JTextField();
-		datetime_s.setFont(new Font("Dialog", Font.PLAIN, 18));
-		datetime_s.setEditable(false);
-		datetime_s.setColumns(10);
-		GridBagConstraints gbc_datetime_s = new GridBagConstraints();
-		gbc_datetime_s.insets = new Insets(0, 0, 5, 5);
-		gbc_datetime_s.fill = GridBagConstraints.BOTH;
-		gbc_datetime_s.gridx = 1;
-		gbc_datetime_s.gridy = 2;
-		panel.add(datetime_s, gbc_datetime_s);
-		
-		JLabel lblRefno = new JLabel("Ref.No :");
-		lblRefno.setFont(new Font("Roboto Slab", Font.BOLD, 18));
-		GridBagConstraints gbc_lblRefno = new GridBagConstraints();
-		gbc_lblRefno.fill = GridBagConstraints.VERTICAL;
-		gbc_lblRefno.anchor = GridBagConstraints.EAST;
-		gbc_lblRefno.insets = new Insets(0, 0, 5, 5);
-		gbc_lblRefno.gridx = 0;
-		gbc_lblRefno.gridy = 3;
-		panel.add(lblRefno, gbc_lblRefno);
-		
-		refno_s = new JTextField();
-		refno_s.setFont(new Font("Dialog", Font.PLAIN, 18));
-		refno_s.setEditable(false);
-		refno_s.setColumns(10);
-		GridBagConstraints gbc_refno_s = new GridBagConstraints();
-		gbc_refno_s.insets = new Insets(0, 0, 5, 5);
-		gbc_refno_s.fill = GridBagConstraints.BOTH;
-		gbc_refno_s.gridx = 1;
-		gbc_refno_s.gridy = 3;
-		panel.add(refno_s, gbc_refno_s);
-		
-		JLabel lblSalesman = new JLabel(" SalesMan :");
-		lblSalesman.setFont(new Font("Roboto Slab", Font.BOLD, 18));
-		GridBagConstraints gbc_lblSalesman = new GridBagConstraints();
-		gbc_lblSalesman.fill = GridBagConstraints.VERTICAL;
-		gbc_lblSalesman.anchor = GridBagConstraints.EAST;
-		gbc_lblSalesman.insets = new Insets(0, 0, 5, 5);
-		gbc_lblSalesman.gridx = 0;
-		gbc_lblSalesman.gridy = 4;
-		panel.add(lblSalesman, gbc_lblSalesman);
-		
-		salesman_s = new JTextField();
-		salesman_s.setFont(new Font("Dialog", Font.PLAIN, 18));
-		salesman_s.setEditable(false);
-		salesman_s.setColumns(10);
-		GridBagConstraints gbc_salesman_s = new GridBagConstraints();
-		gbc_salesman_s.insets = new Insets(0, 0, 5, 5);
-		gbc_salesman_s.fill = GridBagConstraints.BOTH;
-		gbc_salesman_s.gridx = 1;
-		gbc_salesman_s.gridy = 4;
-		panel.add(salesman_s, gbc_salesman_s);
-		
-		JLabel lblCustomername = new JLabel("CustomerName :");
-		lblCustomername.setFont(new Font("Roboto Slab", Font.BOLD, 18));
-		GridBagConstraints gbc_lblCustomername = new GridBagConstraints();
-		gbc_lblCustomername.fill = GridBagConstraints.VERTICAL;
-		gbc_lblCustomername.anchor = GridBagConstraints.EAST;
-		gbc_lblCustomername.insets = new Insets(0, 0, 5, 5);
-		gbc_lblCustomername.gridx = 0;
-		gbc_lblCustomername.gridy = 5;
-		panel.add(lblCustomername, gbc_lblCustomername);
-		
-		custname_s = new JTextField();
-		custname_s.setFont(new Font("Dialog", Font.PLAIN, 18));
-		custname_s.setEditable(false);
-		custname_s.setColumns(10);
-		GridBagConstraints gbc_custname_s = new GridBagConstraints();
-		gbc_custname_s.insets = new Insets(0, 0, 5, 5);
-		gbc_custname_s.fill = GridBagConstraints.BOTH;
-		gbc_custname_s.gridx = 1;
-		gbc_custname_s.gridy = 5;
-		panel.add(custname_s, gbc_custname_s);
-		
-		JLabel lblMobilenumber = new JLabel("MobileNumber :");
-		lblMobilenumber.setFont(new Font("Roboto Slab", Font.BOLD, 18));
-		GridBagConstraints gbc_lblMobilenumber = new GridBagConstraints();
-		gbc_lblMobilenumber.fill = GridBagConstraints.VERTICAL;
-		gbc_lblMobilenumber.anchor = GridBagConstraints.EAST;
-		gbc_lblMobilenumber.insets = new Insets(0, 0, 5, 5);
-		gbc_lblMobilenumber.gridx = 0;
-		gbc_lblMobilenumber.gridy = 6;
-		panel.add(lblMobilenumber, gbc_lblMobilenumber);
-		
-		mobno_s = new JTextField();
-		mobno_s.setFont(new Font("Dialog", Font.PLAIN, 18));
-		mobno_s.setEditable(false);
-		mobno_s.setColumns(10);
-		GridBagConstraints gbc_mobno_s = new GridBagConstraints();
-		gbc_mobno_s.insets = new Insets(0, 0, 5, 5);
-		gbc_mobno_s.fill = GridBagConstraints.BOTH;
-		gbc_mobno_s.gridx = 1;
-		gbc_mobno_s.gridy = 6;
-		panel.add(mobno_s, gbc_mobno_s);
-		
-		JLabel lblModel = new JLabel("Model :");
-		lblModel.setFont(new Font("Roboto Slab", Font.BOLD, 18));
-		GridBagConstraints gbc_lblModel = new GridBagConstraints();
-		gbc_lblModel.fill = GridBagConstraints.VERTICAL;
-		gbc_lblModel.anchor = GridBagConstraints.EAST;
-		gbc_lblModel.insets = new Insets(0, 0, 5, 5);
-		gbc_lblModel.gridx = 0;
-		gbc_lblModel.gridy = 7;
-		panel.add(lblModel, gbc_lblModel);
-		
-		model_s = new JTextField();
-		model_s.setFont(new Font("Dialog", Font.PLAIN, 18));
-		model_s.setEditable(false);
-		model_s.setColumns(10);
-		GridBagConstraints gbc_model_s = new GridBagConstraints();
-		gbc_model_s.insets = new Insets(0, 0, 5, 5);
-		gbc_model_s.fill = GridBagConstraints.BOTH;
-		gbc_model_s.gridx = 1;
-		gbc_model_s.gridy = 7;
-		panel.add(model_s, gbc_model_s);
-		
-		JLabel lblComplaints_1 = new JLabel("Complaints :");
-		lblComplaints_1.setFont(new Font("Roboto Slab", Font.BOLD, 18));
-		GridBagConstraints gbc_lblComplaints_1 = new GridBagConstraints();
-		gbc_lblComplaints_1.anchor = GridBagConstraints.NORTHEAST;
-		gbc_lblComplaints_1.insets = new Insets(0, 0, 5, 5);
-		gbc_lblComplaints_1.gridx = 0;
-		gbc_lblComplaints_1.gridy = 8;
-		panel.add(lblComplaints_1, gbc_lblComplaints_1);
-		
-		complaints_s = new JTextArea();
-		complaints_s.setFont(new Font("Dialog", Font.PLAIN, 18));
-		complaints_s.setWrapStyleWord(true);
-		complaints_s.setLineWrap(true);
-		complaints_s.setEditable(false);
-		complaints_s.setWrapStyleWord(true);
-		complaints_s.setLineWrap(true);
-		JScrollPane sccomp =new JScrollPane(complaints_s,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		GridBagConstraints gbc_complaints_s = new GridBagConstraints();
-		gbc_complaints_s.gridwidth = 2;
-		gbc_complaints_s.insets = new Insets(0, 0, 5, 5);
-		gbc_complaints_s.fill = GridBagConstraints.BOTH;
-		gbc_complaints_s.gridx = 1;
-		gbc_complaints_s.gridy = 8;
-		panel.add(sccomp, gbc_complaints_s);
 		
 		
-		
+	}
+	void setColor(JPanel panel) {
+		panel.setBackground(new Color(102,0,204));
+	}
+	void resetColor(JPanel panel) {
+		panel.setBackground(new Color(102,0,153));
 	}
 }
