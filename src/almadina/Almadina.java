@@ -1,3 +1,7 @@
+/*
+Designed by gokul raj.k.p
+*/
+
 package almadina;
 
 import java.awt.EventQueue;
@@ -433,7 +437,7 @@ public class Almadina {
 					
 					try {
 						Class.forName("org.sqlite.JDBC");
-						Connection conn = DriverManager.getConnection("jdbc:sqlite:memory.db");
+						Connection conn = DriverManager.getConnection("jdbc:sqlite:database.db");
 						
 						PreparedStatement ps = conn.prepareStatement("insert into almadina(date_,sales_man,cust_name,mob_no,model_name,imei,symptoms)"
 								+ " values (?,?,?,?,?,?,?)");
@@ -535,7 +539,7 @@ public class Almadina {
 		search_p.add(lblSearch);
 		sidepanel.add(print_p);
 		
-		JLabel lblgokulraj = new JLabel("_goku_l_raj");
+		JLabel lblgokulraj = new JLabel("_goku_l_raj");//IG
 		lblgokulraj.setBounds(55, 603, 89, 15);
 		sidepanel.add(lblgokulraj);
 		
@@ -557,7 +561,7 @@ public class Almadina {
 						String str = imei_s.getText();
 						
 						Class.forName("org.sqlite.JDBC");				
-						Connection con= DriverManager.getConnection("jdbc:sqlite:memory.db");
+						Connection con= DriverManager.getConnection("jdbc:sqlite:database.db");
 						PreparedStatement st = con.prepareStatement("SELECT * FROM almadina WHERE imei = ? ");
 						st.setString(1, str);
 			
